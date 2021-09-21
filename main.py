@@ -58,7 +58,7 @@ for review in Negative_rev:  # to itrate in each review
             word_index_map[t] = current_index
             current_index += 1
 
-# print(word_index_map)
+print(word_index_map)
 
 # Now we want to make data array
 

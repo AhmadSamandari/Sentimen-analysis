@@ -26,14 +26,48 @@ current = 0
 
 
 def tokeniz(stri):
-    for x in stri:
-        token = x.lower()
-        token = nltk.tokenize.word_tokenize(stri)
-        token = [x for x in token if x not in stopwords]
-        token = [lemmatizer.lemmatize(x) for x in token]
-        token = [x for x in token if len(x) > 3]
+  
+    token = stri.lower()
+    token = nltk.tokenize.word_tokenize(stri)
+    token = [x for x in token if x not in stopwords]
+    token = [lemmatizer.lemmatize(x) for x in token]
+    token = [x for x in token if len(x) > 3]
     return token
+
+
+
+positive_rev = []
+negative_rev = []
 
 
 for x in negative_soup:
     negative_token = tokeniz(x.text)
+    negative_rev.append(negative_token)
+    for x in negative_token:
+        if x not in word_map_index1:
+            word_map_index1[x] = current
+            current += 1
+
+for x in positive_soup:
+    positive_token = tokeniz(x.text)
+    positive_rev.append(positive_token)
+    for x in positive_token:
+        if x not in word_map_index1:
+            word_map_index1[x] = current
+            current += 1
+
+#print(word_map_index1)
+
+## Now lets build the vector
+'''make it right
+?????????????????????????????'''
+
+
+for item in positive_rev:
+    i = word_map_index1.get(item)
+    array[,i] +=1
+    array[,-1] = 1
+
+
+xlen = len(positive_rev) + len(negative_rev)
+array = np.zeros((xlen, len(word_map_index1)+1))
