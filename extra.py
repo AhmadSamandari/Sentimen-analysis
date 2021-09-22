@@ -2,7 +2,8 @@ import nltk
 import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup
-#from sklearn import LogisticRegrssion
+from sklearn import metrics
+from sklearn.linear_model import LogisticRegression
 from nltk import WordNetLemmatizer
 
 lemmatizer = WordNetLemmatizer()
@@ -29,7 +30,7 @@ def tokeniz(stri):
   
     token = stri.lower()
     token = nltk.tokenize.word_tokenize(stri)
-    token = [x for x in token if x not in stopwords]
+    token = [x for x in token if x not in stopwords]   #we are making list of this line words
     token = [lemmatizer.lemmatize(x) for x in token]
     token = [x for x in token if len(x) > 3]
     return token
@@ -38,6 +39,7 @@ def tokeniz(stri):
 
 positive_rev = []
 negative_rev = []
+#+/- rev are list containing lists for each row
 
 
 for x in negative_soup:
@@ -63,11 +65,39 @@ for x in positive_soup:
 ?????????????????????????????'''
 
 
-for item in positive_rev:
-    i = word_map_index1.get(item)
-    array[,i] +=1
-    array[,-1] = 1
+def dict_to_array(item, label):
+    array = np.zeros((len(word_map_index1)+1))
+    for it in item:
+        i = word_map_index1[it]
+        array[i] += 1
+        array[-1] = label
+    return array
 
 
 xlen = len(positive_rev) + len(negative_rev)
-array = np.zeros((xlen, len(word_map_index1)+1))
+data = np.zeros((xlen, len(word_map_index1)+1))
+
+j = 0
+for wordss in positive_rev:
+    data[j:] = dict_to_array(wordss, 1)
+    j += 1
+
+for wordss in negative_rev:  
+    data[j:] = dict_to_array(wordss, 0)
+    j += 1
+
+
+np.random.shuffle(data)
+
+x_test = data[:-1000,:-1]
+x_train = data[-1000:,:-1]
+
+y_test = data[:-1000, -1]
+y_train =data[-1000: , -1]
+
+''' let's make the model'''
+model = LogisticRegression()
+model.fit(x_train, y_train)
+y_pred = model.predict(x_test)
+
+print(metrics.accuracy_score(y_test,y_pred))
