@@ -3,13 +3,17 @@ from sklearn.linear_model import LogisticRegression
 from nltk import WordNetLemmatizer
 import numpy as np
 import nltk
-# nltk.download()
+
+
 
 Lemmatizer = WordNetLemmatizer()  # first we need to initialize
-
 # make a set of stopwords from the words in text
 stopwords = set(word.rstrip() for word in open('stopwords.txt'))
 # print(stopwords)
+
+##############################################################################################################################
+######################################### 1st part ############################################################################
+###############################################################################################################################
 
 Positive_rev = BeautifulSoup(open('positive.review').read(), features="lxml")
 Positive_rev = Positive_rev.findAll('review_text')
@@ -60,8 +64,14 @@ for review in Negative_rev:  # to itrate in each review
 
 print(word_index_map)
 
-# Now we want to make data array
 
+
+##############################################################################################################################
+######################################### 2nd part ############################################################################
+###############################################################################################################################
+
+
+# Now we want to make data array
 
 def token_to_vector(token, label):
     x = np.zeros(len(word_index_map) + 1)  # 1 is for label
@@ -90,6 +100,13 @@ for token in negative_tokens:
     xy = token_to_vector(token, 0)
     data[i:] = xy
     i += 1
+
+
+
+
+##############################################################################################################################
+######################################### 3rd part ############################################################################
+###############################################################################################################################
 
 
 np.random.shuffle(data)
